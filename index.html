@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ditzz Panel</title>
+  <style>
+    *{box-sizing:border-box;font-family:Arial, sans-serif;}
+    body{
+      margin:0;
+      min-height:100vh;
+      background:#0b1020;
+      color:#fff;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:18px;
+    }
+    .app{
+      width:100%;
+      max-width:980px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+    .card{
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:18px;
+      padding:16px;
+      box-shadow:0 14px 40px rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
+    }
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .brand h1{
+      margin:0;
+      font-size:18px;
+      letter-spacing:.4px;
+    }
+    .brand p{
+      margin:0;
+      font-size:12px;
+      opacity:.75;
+    }
+    .btn{
+      border:none;
+      border-radius:14px;
+      padding:10px 12px;
+      font-weight:700;
+      cursor:pointer;
+      color:#fff;
+      background:#2563eb;
+      transition:.2s;
+    }
+    .btn:hover{transform:translateY(-1px);filter:brightness(1.08);}
+    .btn.red{background:#ef4444;}
+    .btn.gray{background:rgba(255,255,255,.12);}
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (min-width: 900px){
+      .grid{
+        grid-template-columns: 280px 1fr;
+      }
+    }
+    .sidebar{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .navBtn{
+      width:100%;
+      text-align:left;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.06);
+      color:#fff;
+      cursor:pointer;
+      transition:.2s;
+      font-weight:700;
+    }
+    .navBtn:hover{filter:brightness(1.1);}
+    .navBtn.active{
+      background:rgba(37,99,235,.35);
+      border-color:rgba(37,99,235,.6);
+    }
+    .content h2{
+      margin:0 0 8px;
+      font-size:16px;
+    }
+    .muted{opacity:.75;font-size:13px;line-height:1.4;}
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    input, textarea, select{
+      width:100%;
+      padding:12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.25);
+      color:#fff;
+      outline:none;
+      font-size:14px;
+    }
+    textarea{min-height:110px;resize:none;}
+    .miniGrid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (min-width: 700px){
+      .miniGrid{grid-template-columns:1fr 1fr 1fr;}
+    }
+    .stat{
+      padding:12px;
+      border-radius:16px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+    }
+    .stat .label{font-size:12px;opacity:.7;}
+    .stat .val{font-size:18px;font-weight:900;margin-top:4px;}
+    .badge{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .badge.admin{background:rgba(34,197,94,.18);border-color:rgba(34,197,94,.35);}
+    .badge.user{background:rgba(245,158,11,.18);border-color:rgba(245,158,11,.35);}
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top:10px;
+    }
+    .item{
+      padding:12px;
+      border-radius:16px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .item b{display:block;margin-bottom:4px;}
+    .small{font-size:12px;opacity:.75;white-space:pre-wrap;}
+    .hr{
+      height:1px;
+      background:rgba(255,255,255,.10);
+      margin:12px 0;
+    }
+    .warn{
+      padding:12px;
+      border-radius:16px;
+      border:1px solid rgba(239,68,68,.35);
+      background:rgba(239,68,68,.12);
+      font-size:13px;
+      line-height:1.4;
+    }
+    .ok{
+      padding:12px;
+      border-radius:16px;
+      border:1px solid rgba(34,197,94,.35);
+      background:rgba(34,197,94,.12);
+      font-size:13px;
+      line-height:1.4;
+    }
+    .loginWrap{
+      max-width:420px;
+      margin:auto;
+    }
+    .loginWrap h2{
+      margin:0 0 6px;
+      font-size:18px;
+    }
+    .hint{
+      margin-top:10px;
+      font-size:12px;
+      opacity:.75;
+      line-height:1.4;
+    }
+    .footerNote{
+      margin-top:10px;
+      font-size:12px;
+      opacity:.65;
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app">
+
+    <!-- LOGIN PAGE -->
+    <div id="pageLogin" class="card loginWrap">
+      <div class="topbar">
+        <div class="brand">
+          <h1>🔐 Ditzz Panel</h1>
+          <p>Login Admin & User (beda menu + proteksi)</p>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <label class="muted">Username</label>
+      <input id="loginUser" placeholder="admin / user" autocomplete="username"/>
+
+      <label class="muted" style="margin-top:10px;">Password</label>
+      <input id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password"/>
+
+      <button id="btnLogin" class="btn" style="margin-top:12px;">Login</button>
+
+      <div class="hint">
+        <b></b>
+        <b>Login User:</b> user / user123
+      </div>
+
+      <div id="loginMsg" class="footerNote"></div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="pageDash" class="card" style="display:none;">
+      <div class="topbar">
+        <div class="brand">
+          <h1>📊 Ditzz Panel</h1>
+          <p id="whoText">-</p>
+        </div>
+
+        <div class="row" style="margin:0;">
+          <button id="btnLogout" class="btn red">Logout</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+          <button class="navBtn" data-page="home">🏠 Dashboard</button>
+          <button class="navBtn" data-page="ann">📢 Pengumuman</button>
+          <button class="navBtn adminOnly" data-page="users">👥 Kelola User</button>
+          <button class="navBtn adminOnly" data-page="logs">🧾 Riwayat Login</button>
+          <button class="navBtn adminOnly" data-page="maint">🛠️ Maintenance</button>
+          <button class="navBtn adminOnly" data-page="reset">🗑️ Reset Data</button>
+          <button class="navBtn" data-page="profile">👤 Profil</button>
+
+          <div class="hr"></div>
+          <div class="muted">
+            ⚡ Role kamu menentukan menu yang muncul.<br>
+            User tidak bisa akses fitur admin.
+          </div>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="content">
+          <div id="contentBox"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+  // ====== CREDENTIALS (Simulasi) ======
+  const CRED = {
+    admin: { username: "admin", password: "ditzz123", role: "admin" },
+    user:  { username: "user",  password: "user123",  role: "user"  }
+  };
+
+  // ====== ELEMENTS ======
+  const pageLogin = document.getElementById("pageLogin");
+  const pageDash = document.getElementById("pageDash");
+  const loginUser = document.getElementById("loginUser");
+  const loginPass = document.getElementById("loginPass");
+  const btnLogin = document.getElementById("btnLogin");
+  const loginMsg = document.getElementById("loginMsg");
+
+  const whoText = document.getElementById("whoText");
+  const btnLogout = document.getElementById("btnLogout");
+  const contentBox = document.getElementById("contentBox");
+
+  const navBtns = [...document.querySelectorAll(".navBtn")];
+  const adminOnlyBtns = [...document.querySelectorAll(".adminOnly")];
+
+  // ====== STORAGE KEYS ======
+  const KEY_SESSION = "ditzz_session";
+  const KEY_ANN = "ditzz_announcements";
+  const KEY_USERS = "ditzz_users";
+  const KEY_LOGS = "ditzz_login_logs";
+  const KEY_MAINT = "ditzz_maintenance";
+
+  // ====== INIT DATA ======
+  function initDefaults(){
+    if(!localStorage.getItem(KEY_ANN)){
+      localStorage.setItem(KEY_ANN, JSON.stringify([
+        { title: "Selamat datang!", body: "Ini adalah Ditzz Panel versi simulasi 😋", time: new Date().toLocaleString("id-ID") }
+      ]));
+    }
+    if(!localStorage.getItem(KEY_USERS)){
+      localStorage.setItem(KEY_USERS, JSON.stringify([
+        { username: "user", role: "user" },
+        { username: "admin", role: "admin" }
+      ]));
+    }
+    if(!localStorage.getItem(KEY_LOGS)){
+      localStorage.setItem(KEY_LOGS, JSON.stringify([]));
+    }
+    if(!localStorage.getItem(KEY_MAINT)){
+      localStorage.setItem(KEY_MAINT, JSON.stringify({ enabled: false }));
+    }
+  }
+  initDefaults();
+
+  // ====== SESSION ======
+  function setSession(sess){
+    localStorage.setItem(KEY_SESSION, JSON.stringify(sess));
+  }
+  function getSession(){
+    try{
+      return JSON.parse(localStorage.getItem(KEY_SESSION) || "null");
+    }catch(e){
+      return null;
+    }
+  }
+  function clearSession(){
+    localStorage.removeItem(KEY_SESSION);
+  }
+
+  function isAdmin(){
+    const s = getSession();
+    return s && s.role === "admin";
+  }
+
+  // ====== MAINTENANCE CHECK ======
+  function isMaintenanceOn(){
+    try{
+      const m = JSON.parse(localStorage.getItem(KEY_MAINT) || '{"enabled":false}');
+      return !!m.enabled;
+    }catch(e){
+      return false;
+    }
+  }
+
+  // ====== LOGIN LOG ======
+  function addLoginLog(username, role){
+    const logs = JSON.parse(localStorage.getItem(KEY_LOGS) || "[]");
+    logs.unshift({
+      username, role,
+      time: new Date().toLocaleString("id-ID"),
+      device: navigator.userAgent
+    });
+    localStorage.setItem(KEY_LOGS, JSON.stringify(logs));
+  }
+
+  // ====== UI HELPERS ======
+  function setActiveNav(page){
+    navBtns.forEach(b=>{
+      b.classList.toggle("active", b.dataset.page === page);
+    });
+  }
+
+  function showLogin(msg, ok=false){
+    loginMsg.textContent = msg;
+    loginMsg.style.opacity = "1";
+    loginMsg.style.color = ok ? "#22c55e" : "#fca5a5";
+  }
+
+  function renderRoleUI(){
+    const s = getSession();
+    if(!s) return;
+
+    // Hide admin menus for user
+    adminOnlyBtns.forEach(b=>{
+      b.style.display = (s.role === "admin") ? "block" : "none";
+    });
+
+    const badge = s.role === "admin"
+      ? `<span class="badge admin">ADMIN</span>`
+      : `<span class="badge user">USER</span>`;
+
+    whoText.innerHTML = `Login sebagai <b>${s.username}</b> ${badge}`;
+  }
+
+  // ====== PAGES ======
+  function pageHome(){
+    const s = getSession();
+    const logs = JSON.parse(localStorage.getItem(KEY_LOGS) || "[]");
+    const anns = JSON.parse(localStorage.getItem(KEY_ANN) || "[]");
+    const users = JSON.parse(localStorage.getItem(KEY_USERS) || "[]");
+    const maint = isMaintenanceOn();
+
+    contentBox.innerHTML = `
+      <h2>🏠 Dashboard</h2>
+      <div class="muted">Halo <b>${s.username}</b> 👋 Ini dashboard kamu.</div>
+
+      <div class="miniGrid">
+        <div class="stat">
+          <div class="label">Total Pengumuman</div>
+          <div class="val">${anns.length}</div>
+        </div>
+        <div class="stat">
+          <div class="label">Total User (simulasi)</div>
+          <div class="val">${users.length}</div>
+        </div>
+        <div class="stat">
+          <div class="label">Maintenance</div>
+          <div class="val">${maint ? "ON" : "OFF"}</div>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="muted">
+        ${s.role === "admin"
+          ? "Kamu bisa mengelola user, pengumuman, dan maintenance."
+          : "Kamu hanya bisa melihat pengumuman dan profil."
+        }
+      </div>
+    `;
+  }
+
+  function pageAnnouncements(){
+    const s = getSession();
+    const anns = JSON.parse(localStorage.getItem(KEY_ANN) || "[]");
+
+    let adminBox = "";
+    if(s.role === "admin"){
+      adminBox = `
+        <div class="hr"></div>
+        <h2>➕ Buat Pengumuman (Admin)</h2>
+        <label class="muted">Judul</label>
+        <input id="annTitle" placeholder="Contoh: Info Jadwal" />
+        <label class="muted" style="margin-top:10px;">Isi</label>
+        <textarea id="annBody" placeholder="Tulis pengumuman di sini..."></textarea>
+        <button id="btnPostAnn" class="btn" style="margin-top:10px;">Posting</button>
+      `;
+    }
+
+    contentBox.innerHTML = `
+      <h2>📢 Pengumuman</h2>
+      <div class="muted">Semua user bisa lihat pengumuman dari admin.</div>
+
+      <div class="list" id="annList"></div>
+      ${adminBox}
+    `;
+
+    const annList = document.getElementById("annList");
+    if(anns.length === 0){
+      annList.innerHTML = `<div class="muted">Belum ada pengumuman.</div>`;
+    }else{
+      annList.innerHTML = anns.map((a,idx)=>`
+        <div class="item">
+          <div>
+            <b>${a.title}</b>
+            <div class="small">${a.body}</div>
+            <div class="small">🕒 ${a.time}</div>
+          </div>
+          ${s.role === "admin"
+            ? `<button class="btn red" data-del="${idx}" style="width:auto; padding:8px 10px;">Hapus</button>`
+            : ""
+          }
+        </div>
+      `).join("");
+    }
+
+    // Admin delete
+    if(s.role === "admin"){
+      annList.querySelectorAll("button[data-del]").forEach(btn=>{
+        btn.onclick = ()=>{
+          const i = Number(btn.dataset.del);
+          const newAnns = JSON.parse(localStorage.getItem(KEY_ANN) || "[]");
+          newAnns.splice(i,1);
+          localStorage.setItem(KEY_ANN, JSON.stringify(newAnns));
+          pageAnnouncements();
+        };
+      });
+
+      // Admin post
+      const btnPost = document.getElementById("btnPostAnn");
+      btnPost.onclick = ()=>{
+        const t = document.getElementById("annTitle").value.trim();
+        const b = document.getElementById("annBody").value.trim();
+        if(!t || !b){
+          alert("Isi judul dan isi pengumuman dulu ya!");
+          return;
+        }
+        const newAnns = JSON.parse(localStorage.getItem(KEY_ANN) || "[]");
+        newAnns.unshift({ title:t, body:b, time: new Date().toLocaleString("id-ID") });
+        localStorage.setItem(KEY_ANN, JSON.stringify(newAnns));
+        pageAnnouncements();
+      };
+    }
+  }
+
+  function pageUsersAdmin(){
+    if(!isAdmin()){
+      contentBox.innerHTML = `<div class="warn">⛔ Kamu bukan admin. Akses ditolak.</div>`;
+      return;
+    }
+
+    const users = JSON.parse(localStorage.getItem(KEY_USERS) || "[]");
+
+    contentBox.innerHTML = `
+      <h2>👥 Kelola User (Admin)</h2>
+      <div class="muted">Simulasi: tambah/hapus user (tidak real database).</div>
+
+      <div class="list" id="userList"></div>
+
+      <div class="hr"></div>
+
+      <h2>➕ Tambah User</h2>
+      <label class="muted">Username</label>
+      <input id="newU" placeholder="contoh: siswa1" />
+      <label class="muted" style="margin-top:10px;">Role</label>
+      <select id="newR">
+        <option value="user">user</option>
+        <option value="admin">admin</option>
+      </select>
+      <button id="btnAddUser" class="btn" style="margin-top:10px;">Tambah</button>
+
+      <div class="small" style="margin-top:8px;">
+        Catatan: Login credential real tetap pakai admin/user bawaan ya (ini cuma simulasi list user).
+      </div>
+    `;
+
+    const userList = document.getElementById("userList");
+    userList.innerHTML = users.map((u,idx)=>`
+      <div class="item">
+        <div>
+          <b>${u.username}</b>
+          <div class="small">Role: ${u.role}</div>
+        </div>
+        <button class="btn red" data-del="${idx}" style="width:auto; padding:8px 10px;">Hapus</button>
+      </div>
+    `).join("");
+
+    userList.querySelectorAll("button[data-del]").forEach(btn=>{
+      btn.onclick = ()=>{
+        const i = Number(btn.dataset.del);
+        const newUsers = JSON.parse(localStorage.getItem(KEY_USERS) || "[]");
+        newUsers.splice(i,1);
+        localStorage.setItem(KEY_USERS, JSON.stringify(newUsers));
+        pageUsersAdmin();
+      };
+    });
+
+    document.getElementById("btnAddUser").onclick = ()=>{
+      const u = document.getElementById("newU").value.trim();
+      const r = document.getElementById("newR").value;
+      if(!u){
+        alert("Isi username dulu!");
+        return;
+      }
+      const newUsers = JSON.parse(localStorage.getItem(KEY_USERS) || "[]");
+      newUsers.unshift({ username:u, role:r });
+      localStorage.setItem(KEY_USERS, JSON.stringify(newUsers));
+      pageUsersAdmin();
+    };
+  }
+
+  function pageLogsAdmin(){
+    if(!isAdmin()){
+      contentBox.innerHTML = `<div class="warn">⛔ Kamu bukan admin. Akses ditolak.</div>`;
+      return;
+    }
+
+    const logs = JSON.parse(localStorage.getItem(KEY_LOGS) || "[]");
+
+    contentBox.innerHTML = `
+      <h2>🧾 Riwayat Login (Admin)</h2>
+      <div class="muted">Menampilkan log login yang tersimpan di localStorage.</div>
+
+      <div class="list" id="logList"></div>
+      <div class="hr"></div>
+      <button id="btnClearLogs" class="btn red">Hapus Semua Log</button>
+    `;
+
+    const logList = document.getElementById("logList");
+    if(logs.length === 0){
+      logList.innerHTML = `<div class="muted">Belum ada log.</div>`;
+    }else{
+      logList.innerHTML = logs.map(l=>`
+        <div class="item">
+          <div>
+            <b>${l.username} (${l.role})</b>
+            <div class="small">🕒 ${l.time}</div>
+            <div class="small">📱 ${l.device}</div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    document.getElementById("btnClearLogs").onclick = ()=>{
+      localStorage.setItem(KEY_LOGS, JSON.stringify([]));
+      pageLogsAdmin();
+    };
+  }
+
+  function pageMaintenanceAdmin(){
+    if(!isAdmin()){
+      contentBox.innerHTML = `<div class="warn">⛔ Kamu bukan admin. Akses ditolak.</div>`;
+      return;
+    }
+
+    const m = JSON.parse(localStorage.getItem(KEY_MAINT) || '{"enabled":false}');
+
+    contentBox.innerHTML = `
+      <h2>🛠️ Maintenance (Admin)</h2>
+      <div class="muted">Kalau ON, user akan lihat pesan maintenance.</div>
+
+      <div class="${m.enabled ? "warn" : "ok"}" style="margin-top:10px;">
+        Status sekarang: <b>${m.enabled ? "ON" : "OFF"}</b>
+      </div>
+
+      <div class="row">
+        <button id="btnOn" class="btn" style="background:#f59e0b;">ON</button>
+        <button id="btnOff" class="btn" style="background:#22c55e;">OFF</button>
+      </div>
+    `;
+
+    document.getElementById("btnOn").onclick = ()=>{
+      localStorage.setItem(KEY_MAINT, JSON.stringify({enabled:true}));
+      pageMaintenanceAdmin();
+    };
+    document.getElementById("btnOff").onclick = ()=>{
+      localStorage.setItem(KEY_MAINT, JSON.stringify({enabled:false}));
+      pageMaintenanceAdmin();
+    };
+  }
+
+  function pageResetAdmin(){
+    if(!isAdmin()){
+      contentBox.innerHTML = `<div class="warn">⛔ Kamu bukan admin. Akses ditolak.</div>`;
+      return;
+    }
+
+    contentBox.innerHTML = `
+      <h2>🗑️ Reset Data (Admin)</h2>
+      <div class="warn">
+        Ini akan menghapus:
+        - Pengumuman
+        - User list simulasi
+        - Log login
+        - Maintenance status
+      </div>
+
+      <button id="btnResetAll" class="btn red" style="margin-top:10px;">RESET SEKARANG</button>
+    `;
+
+    document.getElementById("btnResetAll").onclick = ()=>{
+      if(confirm("Yakin reset semua data?")){
+        localStorage.removeItem(KEY_ANN);
+        localStorage.removeItem(KEY_USERS);
+        localStorage.removeItem(KEY_LOGS);
+        localStorage.removeItem(KEY_MAINT);
+        initDefaults();
+        alert("✅ Data berhasil direset!");
+        pageHome();
+      }
+    };
+  }
+
+  function pageProfile(){
+    const s = getSession();
+    contentBox.innerHTML = `
+      <h2>👤 Profil</h2>
+      <div class="muted">Info akun yang sedang login.</div>
+
+      <div class="list">
+        <div class="item">
+          <div>
+            <b>Username</b>
+            <div class="small">${s.username}</div>
+          </div>
+        </div>
+        <div class="item">
+          <div>
+            <b>Role</b>
+            <div class="small">${s.role}</div>
+          </div>
+        </div>
+        <div class="item">
+          <div>
+            <b>Login Time</b>
+            <div class="small">${s.loginTime}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // ====== ROUTER ======
+  function openPage(page){
+    const s = getSession();
+    if(!s) return;
+
+    // User cannot access admin pages
+    const adminPages = ["users","logs","maint","reset"];
+    if(s.role !== "admin" && adminPages.includes(page)){
+      contentBox.innerHTML = `<div class="warn">⛔ Akses ditolak. Menu ini khusus Admin.</div>`;
+      setActiveNav("home");
+      return;
+    }
+
+    setActiveNav(page);
+
+    if(page === "home") pageHome();
+    if(page === "ann") pageAnnouncements();
+    if(page === "users") pageUsersAdmin();
+    if(page === "logs") pageLogsAdmin();
+    if(page === "maint") pageMaintenanceAdmin();
+    if(page === "reset") pageResetAdmin();
+    if(page === "profile") pageProfile();
+  }
+
+  navBtns.forEach(btn=>{
+    btn.onclick = ()=> openPage(btn.dataset.page);
+  });
+
+  // ====== LOGIN ACTION ======
+  btnLogin.onclick = ()=>{
+    const u = loginUser.value.trim();
+    const p = loginPass.value.trim();
+
+    if(!u || !p){
+      showLogin("❌ Isi username & password dulu!", false);
+      return;
+    }
+
+    // Check maintenance for user only
+    const maint = isMaintenanceOn();
+    if(maint && u !== "admin"){
+      showLogin("🛠️ Server sedang maintenance. Cuma admin yang bisa masuk.", false);
+      return;
+    }
+
+    // Validate
+    let role = null;
+    if(u === CRED.admin.username && p === CRED.admin.password) role = "admin";
+    if(u === CRED.user.username  && p === CRED.user.password)  role = "user";
+
+    if(!role){
+      showLogin("❌ Username atau password salah!", false);
+      return;
+    }
+
+    const sess = {
+      username: u,
+      role,
+      loginTime: new Date().toLocaleString("id-ID")
+    };
+
+    setSession(sess);
+    addLoginLog(u, role);
+
+    showLogin("✅ Login berhasil!", true);
+
+    // Open dashboard
+    pageLogin.style.display = "none";
+    pageDash.style.display = "block";
+    renderRoleUI();
+    openPage("home");
+  };
+
+  // ====== LOGOUT ======
+  btnLogout.onclick = ()=>{
+    clearSession();
+    pageDash.style.display = "none";
+    pageLogin.style.display = "block";
+    loginPass.value = "";
+    showLogin("Logout berhasil.", true);
+  };
+
+  // ====== AUTO LOGIN IF SESSION EXISTS ======
+  const sess = getSession();
+  if(sess){
+    // If maintenance on and role user, force logout
+    if(isMaintenanceOn() && sess.role !== "admin"){
+      clearSession();
+    }else{
+      pageLogin.style.display = "none";
+      pageDash.style.display = "block";
+      renderRoleUI();
+      openPage("home");
+    }
+  }
+</script>
+</body>
+</html>
